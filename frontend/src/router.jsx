@@ -1,5 +1,6 @@
 import { createBrowserRouter, Outlet } from 'react-router-dom';
 import AuthLayout from './layouts/AuthLayout';
+import DashBoardPage from './pages/DashboardPage';
 
 const isLogin = window.localStorage.getItem('isLogin');
 
@@ -20,7 +21,7 @@ const router = createBrowserRouter([
       {
         index: true,
         path: '/',
-        element: isLogin ? <div>DashboardPage</div> : <div>OnboardingPage</div>,
+        element: isLogin ? <DashBoardPage /> : <div>OnboardingPage</div>,
       },
       {
         path: '/:historyId',

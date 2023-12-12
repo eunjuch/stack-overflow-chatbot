@@ -1,11 +1,13 @@
-import Header from '../../components/Header';
-import * as S from './index.styles.ts';
+import Sidebar from '../../components/Sidebar/index.jsx';
+import * as S from './index.styles.js';
 
 const AuthLayout = ({ children }) => {
   return (
     <S.Layout>
-      <Header />
-      {children}
+      <Sidebar />
+      <S.Content>
+        <S.ContentInner>{children}</S.ContentInner>
+      </S.Content>
     </S.Layout>
   );
 };
