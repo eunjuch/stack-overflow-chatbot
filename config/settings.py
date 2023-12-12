@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     'user.apps.UserConfig',
     'history.apps.HistoryConfig',
     'rest_framework',
-    'rest_framework_simplejwt'
+    'rest_framework_simplejwt',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
