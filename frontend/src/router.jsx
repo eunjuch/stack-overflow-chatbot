@@ -1,24 +1,34 @@
 import { createBrowserRouter, Outlet } from 'react-router-dom';
-import BaseLayout from './layouts/BaseLayout';
+import AuthLayout from './layouts/AuthLayout';
+
+const isLogin = window.localStorage.getItem('isLogin');
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: (
-      <BaseLayout>
+    element: isLogin ? (
+      <AuthLayout>
         <Outlet />
-      </BaseLayout>
+      </AuthLayout>
+    ) : (
+      <div>
+        <Outlet />
+      </div>
     ),
     errorElement: <div>NotFound</div>,
     children: [
       {
         index: true,
         path: '/',
-        element: <div>Home</div>,
+        element: isLogin ? <div>DashboardPage</div> : <div>OnboardingPage</div>,
+      },
+      {
+        path: '/:historyId',
+        element: <div>HistoryPage</div>,
       },
       {
         path: '/auth',
-        element: <div>Auth</div>,
+        element: <div>AuthPage</div>,
       },
     ],
   },

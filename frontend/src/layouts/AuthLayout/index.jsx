@@ -1,7 +1,7 @@
 import Header from '../../components/Header';
 import * as S from './index.styles.ts';
 
-const BaseLayout = ({ children }) => {
+const AuthLayout = ({ children }) => {
   return (
     <S.Layout>
       <Header />
@@ -10,4 +10,4 @@ const BaseLayout = ({ children }) => {
   );
 };
 
-export default BaseLayout;
+export default AuthLayout;
