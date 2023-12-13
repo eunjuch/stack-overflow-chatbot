@@ -1,10 +1,11 @@
 import HistoryList from '../HistoryList/index.jsx';
 import * as S from './index.styles.js';
 import { ReactComponent as LogoIcon } from '../../assets/logo.svg';
-import { ReactComponent as UserIcon } from '../../assets/user.svg';
-import { ReactComponent as LogoutIcon } from '../../assets/logout.svg';
+import useModal from '../../hooks/useModal.js';
+import HistoryFormModal from '../Modal/HistoryFormModal/index.jsx';
 
 const Sidebar = () => {
+  const [isOpen, handleClickModalOpen, handleClickModalClose] = useModal();
   return (
     <S.Layout>
       <S.Logo>
@@ -13,8 +14,9 @@ const Sidebar = () => {
       </S.Logo>
       <HistoryList />
       <S.Bottom>
-        <S.Button>ADD HISTORY</S.Button>
+        <S.Button onClick={handleClickModalOpen}>Add History</S.Button>
       </S.Bottom>
+      {isOpen && <HistoryFormModal handleClickModalClose={handleClickModalClose} width="400px" height="auto" />}
     </S.Layout>
   );
 };
