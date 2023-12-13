@@ -1,4 +1,4 @@
-import * as S from './index.styles.ts';
+import * as S from './index.styles.js';
 import { ReactComponent as Logo } from '../../assets/logo.svg';
 
 const Header = () => {
