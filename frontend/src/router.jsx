@@ -1,5 +1,7 @@
 import { createBrowserRouter, Outlet } from 'react-router-dom';
 import AuthLayout from './layouts/AuthLayout';
+import BaseLayout from './layouts/BaseLayout';
+import SignPage from './pages/SignPage';
 
 const isLogin = window.localStorage.getItem('isLogin');
 
@@ -12,7 +14,9 @@ const router = createBrowserRouter([
       </AuthLayout>
     ) : (
       <div>
-        <Outlet />
+        <BaseLayout>
+          <Outlet />
+        </BaseLayout>
       </div>
     ),
     errorElement: <div>NotFound</div>,
@@ -28,7 +32,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/auth',
-        element: <div>AuthPage</div>,
+        element: <SignPage />,
       },
     ],
   },
