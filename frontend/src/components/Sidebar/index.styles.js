@@ -25,18 +25,9 @@ export const Bottom = styled.div`
 export const Button = styled.button`
   width: 100%;
   height: 40px;
-  border: 1px solid #807ab526;
-  color: #807ab526;
-  background-image: linear-gradient(45deg, #807ab580 50%, #ffffff 50%);
-  background-position: 99%;
-  background-size: 400%;
-  transition: background 800ms ease-in-out;
-  font-size: 15px;
-  color: black;
-  border-radius: 8px;
-  &:hover {
-    background-position: 0;
-  }
+  font-size: 16px;
+  border-radius: 4px;
+  font-weight: 600;
 `;
 
 export const UserInfo = styled.div`
