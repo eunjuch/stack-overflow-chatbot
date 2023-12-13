@@ -3,46 +3,44 @@ import time
 from django.http import JsonResponse
 from history.models import History, Prompt
 from rest_framework.views import APIView
+from history.forms import HistoryForm
 
 from openai import OpenAI
-from dotenv import load_dotenv
 import os
 
-load_dotenv()
 OpenAI.api_key = os.environ.get('OPENAI_API_KEY')
 
 client = OpenAI(organization='org-o3IP2SrQdimuzRhvZu8A07Bp', api_key=OpenAI.api_key)
 
-class History(APIView):
-    def post(self, request):
-        data = json.loads(request.body.decode('utf-8'))
-        # 파일 서버에 저장하는거
-        History.objects.create(
-            users_id = data["user_id"],
-            title = data["title"],
-            file_name = data["file_name"],
-            is_file_exist = data["is_file_exist"],
-        )
 
-        return JsonResponse({'message' : 'created'}, status = 201)
+class HistoryView(APIView):
+    def post(self, request, *args, **kwargs):
+        form = HistoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.is_file_exist = 'file' in request.FILES
+            instance.save()
 
-    def get_all_histories(self, request):
+            return JsonResponse({'message': 'SUCCESS!'}, status=201)
+        else:
+            return JsonResponse(form.errors, status=400)
+
+    def get(self, request):
         histories = History.objects.all()
         results = []
-
+        # source file 내용으로 -> source_file field 추가
         for history in histories:
             results.append(
                 {
                     "history_id": history.id,
                     "user_id": history.users_id,
                     "title": history.title,
-                    "file_name": history.file_name,
+                    "file": history.file.name,
                     "is_file_exist": history.is_file_exist,
                     "created_at": history.created_at
                 }
             )
-        return JsonResponse({'histories': results}, status = 200)
-
+        return JsonResponse({'histories': results}, status=200)
 
     class Prompt(APIView):
         def post(self, request):
@@ -134,4 +132,3 @@ class History(APIView):
             )
 
             return JsonResponse({'message': 'created'}, status=201)
-

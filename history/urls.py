@@ -1,9 +1,8 @@
 from django.urls import path
-from . import views
+from history.views import HistoryView
 
 app_name = 'history'
 
 urlpatterns = [
-    path('/histories', views.HistoryView.create_history),
-    path('/histories', views.HistoryView.get_all_histories)
+    path('histories/', HistoryView.as_view(), name='History'),
 ]

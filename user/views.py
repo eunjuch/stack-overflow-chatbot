@@ -9,8 +9,8 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from .serializers import UserSerializer, UserLoginSerializer
-
+from .serializers import UserSerializer, UserLoginSerializer, CheckUserIdSerializer
+from user.models import CustomUser
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -35,6 +35,19 @@ class SignUpView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class CheckUserIdView(APIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        serializer = CheckUserIdSerializer(data=request.data)
+        if serializer.is_valid():
+            user_id = serializer.validated_data['user_id']
+            is_duplicate = CustomUser.objects.filter(user_id=user_id).exists()
+
+            return Response({'is_duplicate': is_duplicate}, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(APIView):
     permission_classes = (AllowAny,)
