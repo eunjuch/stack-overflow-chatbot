@@ -4,6 +4,6 @@ from . import views
 app_name = 'history'
 
 urlpatterns = [
-    path('/histories', views.HistoryView.create_history),
-    path('/histories', views.HistoryView.get_all_histories)
+    path('/histories/prompts', views.PromptPostView.as_view(), name="prompt_create"),
+    path('histories/prompts/<int:prompt_id>', views.PromptDeleteView.as_view(), name="prompt_delete")
 ]
