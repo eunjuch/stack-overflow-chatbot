@@ -77,6 +77,7 @@ class PromptPostView(APIView):
                 ]
             )
             print(response.choices[0].message.content)
+            language = ""
             answer = response.choices[0].message.content
 
         # 파일 있는 경우
@@ -139,15 +140,20 @@ class PromptPostView(APIView):
                     print("processing...")
 
             # Response 수신
-            answer = messages.data[0].content[0].text.value
+            answer_tmp = messages.data[0].content[0].text.value
+            answer = answer_tmp[answer_tmp.find('\n') + 1:answer_tmp.rfind('\n')]
+            language = history.file.name[history.file.name.find('.') + 1:]
+            print(language)
             print(answer)
+
+
         Prompt.objects.create(
             history_id=data["history_id"],
             user_message=data["user_message"],
             answer=answer
         )
 
-        return JsonResponse({'message': 'created', 'answer': answer}, status=status.HTTP_200_OK)
+        return JsonResponse({'message': 'created', 'answer': answer, 'language': language}, status=status.HTTP_200_OK)
 
 class PromptDeleteView(APIView):
     permission_classes = (IsAuthenticated,)
