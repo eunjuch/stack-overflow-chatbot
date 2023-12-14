@@ -21,6 +21,10 @@ class HistoryView(APIView):
     permission_classes = (IsAuthenticated,)
     def post(self, request, *args, **kwargs):
         form = HistoryForm(request.POST, request.FILES)
+
+        if History.objects.filter(user_id=request.POST['user_id']).count() >= 10:
+            History.objects.filter(user_id=request.POST['user_id']).order_by('pk').first().delete()
+
         if form.is_valid():
             instance = form.save(commit=False)
             instance.is_file_exist = 'file' in request.FILES
