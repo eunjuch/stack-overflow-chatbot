@@ -59,6 +59,7 @@ class HistoryDeleteGetView(APIView):
         return JsonResponse({'message': 'Delete Success!'}, status=status.HTTP_200_OK)
 
 class PromptPostView(APIView):
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         data = json.loads(request.body.decode('utf-8'))
@@ -67,7 +68,6 @@ class PromptPostView(APIView):
         # 파일 없는 경우
         if history.is_file_exist == False:
             response = client.chat.completions.create(
-                name="질문 답변",
                 model="gpt-4-1106-preview",
                 messages=[
                     {"role": "user",
@@ -148,8 +148,9 @@ class PromptPostView(APIView):
         return JsonResponse({'message': 'created', 'answer': answer}, status=status.HTTP_200_OK)
 
 class PromptDeleteView(APIView):
+    permission_classes = (IsAuthenticated,)
 
     def delete(self, request, prompt_id):
-        prompt = Prompt.objects.get(prompt_id=prompt_id)
+        prompt = get_object_or_404(Prompt, pk=prompt_id)
         prompt.delete()
         return JsonResponse({'message': 'deleted'}, status=status.HTTP_200_OK)
