@@ -23,9 +23,7 @@ class HistoryView(APIView):
         form = HistoryForm(request.POST, request.FILES)
         if form.is_valid():
             instance = form.save(commit=False)
-            if 'file' in request.FILES:
-                instance.is_file_exist = True
-                instance.file = request.FILES
+            instance.is_file_exist = 'file' in request.FILES
             instance.save()
 
             return JsonResponse({'message': 'SUCCESS!'}, status=status.HTTP_201_CREATED)
