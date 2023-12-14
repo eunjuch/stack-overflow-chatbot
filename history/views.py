@@ -3,45 +3,58 @@ import time
 from django.http import JsonResponse
 from history.models import History, Prompt
 from rest_framework.views import APIView
+from history.forms import HistoryForm
+from django.shortcuts import get_object_or_404
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from openai import OpenAI
-from dotenv import load_dotenv
 import os
 
-load_dotenv()
 OpenAI.api_key = os.environ.get('OPENAI_API_KEY')
 
 client = OpenAI(organization='org-o3IP2SrQdimuzRhvZu8A07Bp', api_key=OpenAI.api_key)
 
-class History(APIView):
-    def post(self, request):
-        data = json.loads(request.body.decode('utf-8'))
-        # 파일 서버에 저장하는거
-        History.objects.create(
-            users_id = data["user_id"],
-            title = data["title"],
-            file_name = data["file_name"],
-            is_file_exist = data["is_file_exist"],
-        )
 
-        return JsonResponse({'message' : 'created'}, status = 201)
+class HistoryView(APIView):
+    permission_classes = (IsAuthenticated,)
+    def post(self, request, *args, **kwargs):
+        form = HistoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.is_file_exist = 'file' in request.FILES
+            instance.save()
 
-    def get_all_histories(self, request):
-        histories = History.objects.all()
-        results = []
+            return JsonResponse({'message': 'SUCCESS!'}, status=status.HTTP_201_CREATED)
+        else:
+            return JsonResponse(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        for history in histories:
-            results.append(
-                {
-                    "history_id": history.id,
-                    "user_id": history.users_id,
-                    "title": history.title,
-                    "file_name": history.file_name,
-                    "is_file_exist": history.is_file_exist,
-                    "created_at": history.created_at
-                }
-            )
-        return JsonResponse({'histories': results}, status = 200)
+    def get(self, request):
+        history_list = list(History.objects.all().values())
+        return JsonResponse({'histories': history_list}, status=status.HTTP_200_OK)
+
+class HistoryDeleteGetView(APIView):
+    permission_classes = (IsAuthenticated,)
+    def get(self, request, history_id):
+        prompt_list = list(Prompt.objects.filter(history_id=history_id).values())
+        history = get_object_or_404(History, pk=history_id)
+        if not prompt_list:
+            return Response({'message': 'No exist prompts'})
+        else:
+            with open('source_files/' + history.file.name, 'r', encoding='UTF8') as file:
+                file_content = file.read()
+            response = {
+                'title': history.title,
+                'source_code': file_content,
+                'prompt_list': prompt_list
+            }
+            return JsonResponse(response, status=status.HTTP_200_OK)
+
+    def delete(self, request, history_id):
+        history = get_object_or_404(History, pk=history_id)
+        history.delete()
+        return JsonResponse({'message': 'Delete Success!'}, status=status.HTTP_200_OK)
 
 
     class Prompt(APIView):
@@ -134,4 +147,3 @@ class History(APIView):
             )
 
             return JsonResponse({'message': 'created'}, status=201)
-

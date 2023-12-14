@@ -9,12 +9,14 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('uid', 'name', 'password')
+        fields = ('user_id', 'name', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
+class CheckUserIdSerializer(serializers.Serializer):
+    user_id = serializers.CharField(max_length=15)
 
 class UserLoginSerializer(serializers.Serializer):
-    uid = serializers.CharField()
+    user_id = serializers.CharField()
     password = serializers.CharField()
 
     def validate(self, data):
