@@ -3,8 +3,10 @@ import AuthLayout from './layouts/AuthLayout';
 import BaseLayout from './layouts/BaseLayout';
 import DashBoardPage from './pages/DashboardPage';
 import SignPage from './pages/SignPage';
+import OnboardingPage from './pages/OnboardingPage';
 
-const isLogin = window.localStorage.getItem('isLogin');
+// const isLogin = window.localStorage.getItem('isLogin');
+const isLogin = false;
 
 const router = createBrowserRouter([
   {
@@ -25,7 +27,7 @@ const router = createBrowserRouter([
       {
         index: true,
         path: '/',
-        element: isLogin ? <DashBoardPage /> : <div>OnboardingPage</div>,
+        element: isLogin ? <DashBoardPage /> : <OnboardingPage />,
       },
       {
         path: '/:historyId',

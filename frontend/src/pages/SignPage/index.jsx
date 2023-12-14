@@ -12,7 +12,15 @@ const SignPage = () => {
   }
   return (
     <>
-      <div style={{ width: '100%', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div
+        style={{
+          width: '100%',
+          minHeight: '100vh',
+          marginTop: '-56px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
         <S.SignWrapper>
           <TabContext value={tabValue} >
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
