@@ -4,6 +4,10 @@ from django.http import JsonResponse
 from history.models import History, Prompt
 from rest_framework.views import APIView
 from history.forms import HistoryForm
+from django.shortcuts import get_object_or_404
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from openai import OpenAI
 import os
@@ -14,6 +18,7 @@ client = OpenAI(organization='org-o3IP2SrQdimuzRhvZu8A07Bp', api_key=OpenAI.api_
 
 
 class HistoryView(APIView):
+    permission_classes = (IsAuthenticated,)
     def post(self, request, *args, **kwargs):
         form = HistoryForm(request.POST, request.FILES)
         if form.is_valid():
@@ -21,26 +26,36 @@ class HistoryView(APIView):
             instance.is_file_exist = 'file' in request.FILES
             instance.save()
 
-            return JsonResponse({'message': 'SUCCESS!'}, status=201)
+            return JsonResponse({'message': 'SUCCESS!'}, status=status.HTTP_201_CREATED)
         else:
-            return JsonResponse(form.errors, status=400)
+            return JsonResponse(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
-        histories = History.objects.all()
-        results = []
-        # source file 내용으로 -> source_file field 추가
-        for history in histories:
-            results.append(
-                {
-                    "history_id": history.id,
-                    "user_id": history.users_id,
-                    "title": history.title,
-                    "file": history.file.name,
-                    "is_file_exist": history.is_file_exist,
-                    "created_at": history.created_at
-                }
-            )
-        return JsonResponse({'histories': results}, status=200)
+        history_list = list(History.objects.all().values())
+        return JsonResponse({'histories': history_list}, status=status.HTTP_200_OK)
+
+class HistoryDeleteGetView(APIView):
+    permission_classes = (IsAuthenticated,)
+    def get(self, request, history_id):
+        prompt_list = list(Prompt.objects.filter(history_id=history_id).values())
+        history = get_object_or_404(History, pk=history_id)
+        if not prompt_list:
+            return Response({'message': 'No exist prompts'})
+        else:
+            with open('source_files/' + history.file.name, 'r', encoding='UTF8') as file:
+                file_content = file.read()
+            response = {
+                'title': history.title,
+                'source_code': file_content,
+                'prompt_list': prompt_list
+            }
+            return JsonResponse(response, status=status.HTTP_200_OK)
+
+    def delete(self, request, history_id):
+        history = get_object_or_404(History, pk=history_id)
+        history.delete()
+        return JsonResponse({'message': 'Delete Success!'}, status=status.HTTP_200_OK)
+
 
     class Prompt(APIView):
         def post(self, request):
