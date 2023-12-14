@@ -3,16 +3,16 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, uid, name, password=None):
-        if not uid:
+    def create_user(self, user_id, name, password=None):
+        if not user_id:
             raise ValueError('Users must have a unique identifier')
-        user = self.model(uid=uid, name=name)
+        user = self.model(user_id=user_id, name=name)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, uid, name, password):
-        user = self.create_user(uid=uid, name=name, password=password)
+    def create_superuser(self, user_id, name, password):
+        user = self.create_user(user_id=user_id, name=name, password=password)
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
@@ -20,14 +20,14 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser):
-    uid = models.CharField(max_length=255, unique=True)
+    user_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
 
     objects = CustomUserManager()
 
-    USERNAME_FIELD = 'uid'
+    USERNAME_FIELD = 'user_id'
     REQUIRED_FIELDS = ['name']
 
     def __str__(self):
-        return self.uid
+        return self.user_id
