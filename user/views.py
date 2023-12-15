@@ -31,9 +31,17 @@ class SignUpView(APIView):
         serializer = UserSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            response = {
+                'is_success': True,
+                'result': serializer.data
+            }
+            return Response(response, status=status.HTTP_201_CREATED)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            response = {
+                'is_success': False,
+                'message': serializer.errors
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CheckUserIdView(APIView):
@@ -45,9 +53,17 @@ class CheckUserIdView(APIView):
             user_id = serializer.validated_data['user_id']
             is_duplicate = CustomUser.objects.filter(user_id=user_id).exists()
 
-            return Response({'is_duplicate': is_duplicate}, status=status.HTTP_200_OK)
+            response = {
+                'is_success': True,
+                'result': {'is_duplicate': is_duplicate}
+            }
+            return Response(response, status=status.HTTP_200_OK)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        response = {
+            'is_success': False,
+            'message': serializer.errors
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(APIView):
     permission_classes = (AllowAny,)
@@ -57,9 +73,17 @@ class LoginView(APIView):
         if serializer.is_valid():
             user = serializer.validated_data['user']
             tokens = get_tokens_for_user(user)
-            return Response(tokens, status=status.HTTP_200_OK)
+            response = {
+                'is_success': True,
+                'result': tokens
+            }
+            return Response(response, status=status.HTTP_200_OK)
         else:
-            raise AuthenticationFailed('Invalid credentials, try again')
+            response = {
+                'is_success': False,
+                'message': 'Invalid credentials, try again'
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LogoutView(APIView):
@@ -70,12 +94,13 @@ class LogoutView(APIView):
             refresh_token = request.data['refresh']
             token = RefreshToken(refresh_token)
             token.blacklist()
-            return Response(status=status.HTTP_205_RESET_CONTENT)
+
+            response = {
+                'is_success': True
+            }
+            return Response(response, status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-class TestView(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def get(self, request):
-        return Response({'message': 'success!'}, status=status.HTTP_200_OK)
+            response = {
+                'is_success': False
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)

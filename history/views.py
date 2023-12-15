@@ -30,19 +30,40 @@ class HistoryView(APIView):
             instance.is_file_exist = 'file' in request.FILES
             instance.save()
 
-            return JsonResponse({'message': 'SUCCESS!'}, status=status.HTTP_201_CREATED)
+            response = {
+                'is_success': True,
+                'result': {'message': 'History post success'}
+            }
+            return JsonResponse(response, status=status.HTTP_201_CREATED)
         else:
-            return JsonResponse(form.errors, status=status.HTTP_400_BAD_REQUEST)
+            response = {
+                'is_success': False,
+                'message': form.errors
+            }
+            return JsonResponse(response, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
         history_list = list(History.objects.all().values())
-        return JsonResponse({'histories': history_list}, status=status.HTTP_200_OK)
+        response = {
+            'is_success': True,
+            'result': {'history_list': history_list}
+        }
+        return JsonResponse(response, status=status.HTTP_200_OK)
 
 class HistoryDeleteGetView(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self, request, history_id):
         prompt_list = list(Prompt.objects.filter(history_id=history_id).values())
-        history = get_object_or_404(History, pk=history_id)
+        history: History
+        try:
+            history = get_object_or_404(History, pk=history_id)
+        except:
+            response = {
+                'is_success': False,
+                'message': {'message': 'History not exist'}
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
         if history.file:
             language = ''
             with open('source_files/' + history.file.name, 'r', encoding='UTF8') as file:
@@ -60,36 +81,52 @@ class HistoryDeleteGetView(APIView):
                     language = 'Kotlin'
             if not prompt_list:
                 response = {
-                    'title': history.title,
-                    'source_code': file_content,
-                    'language': language
+                    'is_success': True,
+                    'result': {
+                        'title': history.title,
+                        'source_code': file_content,
+                        'language': language
+                    }
                 }
                 return JsonResponse(response, status=status.HTTP_200_OK)
             else:
                 response = {
-                    'title': history.title,
-                    'source_code': file_content,
-                    'prompt_list': prompt_list,
-                    'language': language
+                    'is_success': True,
+                    'result': {
+                        'title': history.title,
+                        'source_code': file_content,
+                        'prompt_list': prompt_list,
+                        'language': language
+                    }
                 }
                 return JsonResponse(response, status=status.HTTP_200_OK)
         else:
             if not prompt_list:
                 response = {
-                    'title': history.title
+                    'is_success': True,
+                    'result': {
+                        'title': history.title
+                    }
                 }
                 return JsonResponse(response, status=status.HTTP_200_OK)
             else:
                 response = {
-                    'title': history.title,
-                    'prompt_list': prompt_list
+                    'is_success': True,
+                    'result': {
+                        'title': history.title,
+                        'prompt_list': prompt_list
+                    }
                 }
                 return JsonResponse(response, status=status.HTTP_200_OK)
 
     def delete(self, request, history_id):
         history = get_object_or_404(History, pk=history_id)
         history.delete()
-        return JsonResponse({'message': 'Delete Success!'}, status=status.HTTP_200_OK)
+        response = {
+            'is_success': True,
+            'result': {'message': 'History delete success'}
+        }
+        return JsonResponse(response, status=status.HTTP_200_OK)
 
 class PromptPostView(APIView):
     permission_classes = (IsAuthenticated,)
