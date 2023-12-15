@@ -43,17 +43,48 @@ class HistoryDeleteGetView(APIView):
     def get(self, request, history_id):
         prompt_list = list(Prompt.objects.filter(history_id=history_id).values())
         history = get_object_or_404(History, pk=history_id)
-        if not prompt_list:
-            return Response({'message': 'No exist prompts'})
-        else:
+        if history.file:
+            language = ''
             with open('source_files/' + history.file.name, 'r', encoding='UTF8') as file:
                 file_content = file.read()
-            response = {
-                'title': history.title,
-                'source_code': file_content,
-                'prompt_list': prompt_list
-            }
-            return JsonResponse(response, status=status.HTTP_200_OK)
+                language = file.name[file.name.index('.') + 1:].upper()
+                if language == 'CPP':
+                    language = 'C++'
+                elif language == 'CS':
+                    language = 'C#'
+                elif language == 'JS':
+                    language = 'Java Script'
+                elif language == 'PY':
+                    language = 'Python'
+                elif language == 'KT':
+                    language = 'Kotlin'
+            if not prompt_list:
+                response = {
+                    'title': history.title,
+                    'source_code': file_content,
+                    'language': language
+                }
+                return JsonResponse(response, status=status.HTTP_200_OK)
+            else:
+                response = {
+                    'title': history.title,
+                    'source_code': file_content,
+                    'prompt_list': prompt_list,
+                    'language': language
+                }
+                return JsonResponse(response, status=status.HTTP_200_OK)
+        else:
+            if not prompt_list:
+                response = {
+                    'title': history.title
+                }
+                return JsonResponse(response, status=status.HTTP_200_OK)
+            else:
+                response = {
+                    'title': history.title,
+                    'prompt_list': prompt_list
+                }
+                return JsonResponse(response, status=status.HTTP_200_OK)
 
     def delete(self, request, history_id):
         history = get_object_or_404(History, pk=history_id)
