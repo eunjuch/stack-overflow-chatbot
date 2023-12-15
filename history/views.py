@@ -219,7 +219,12 @@ class PromptPostView(APIView):
             answer=answer
         )
 
-        return JsonResponse( status=status.HTTP_200_OK)
+        response = {
+            'is_success': True,
+            'result': {'message': 'Prompt-answer create success'}
+        }
+
+        return JsonResponse(response, status=status.HTTP_200_OK)
 
 class PromptDeleteView(APIView):
     permission_classes = (IsAuthenticated,)
@@ -227,4 +232,8 @@ class PromptDeleteView(APIView):
     def delete(self, request, prompt_id):
         prompt = get_object_or_404(Prompt, pk=prompt_id)
         prompt.delete()
-        return JsonResponse({'message': 'deleted'}, status=status.HTTP_200_OK)
+        response = {
+            'is_success': True,
+            'result': {'message': 'Prompt delete success'}
+        }
+        return JsonResponse(response, status=status.HTTP_200_OK)
