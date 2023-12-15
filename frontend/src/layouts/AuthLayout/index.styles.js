@@ -25,4 +25,5 @@ export const ContentInner = styled.div`
   height: 100%;
   background-color: white;
   border-radius: 20px;
+  padding: 16px;
 `;

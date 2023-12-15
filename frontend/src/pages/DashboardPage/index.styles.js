@@ -11,7 +11,7 @@ export const Content = styled.div`
 
 export const Inner = styled.div`
   text-align: center;
-  margin-top: 110px;
+  margin-top: 60px;
 `;
 
 export const Logo = styled.div`
