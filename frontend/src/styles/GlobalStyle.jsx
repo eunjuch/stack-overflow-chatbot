@@ -10,6 +10,11 @@ const GlobalStyle = createGlobalStyle`
  html {
    font-size:16px;
  }
+
+ ul,li,ol{
+  padding:0;
+  margin:0;
+ }
  
  a{
    text-decoration:none;
