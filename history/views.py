@@ -213,18 +213,26 @@ class PromptPostView(APIView):
             print(answer)
 
 
-        Prompt.objects.create(
+        prompt = Prompt.objects.create(
             history_id=data["history_id"],
             user_message=data["user_message"],
             answer=answer
         )
 
-        response = {
-            'is_success': True,
-            'result': {'message': 'Prompt-answer create success'}
-        }
+        try:
+            Prompt.objects.get(pk=prompt.pk)
+            response = {
+                'is_success': True,
+                'result': {'message': 'Prompt-answer create success'}
+            }
+            return JsonResponse(response, status=status.HTTP_200_OK)
 
-        return JsonResponse(response, status=status.HTTP_200_OK)
+        except Prompt.DoesNotExist:
+            response = {
+                'is_success': False,
+                'result': {'message': 'Prompt-answer create fail..'}
+            }
+            return JsonResponse(response, status=status.HTTP_400_BAD_REQUEST)
 
 class PromptDeleteView(APIView):
     permission_classes = (IsAuthenticated,)
@@ -232,8 +240,18 @@ class PromptDeleteView(APIView):
     def delete(self, request, prompt_id):
         prompt = get_object_or_404(Prompt, pk=prompt_id)
         prompt.delete()
-        response = {
-            'is_success': True,
-            'result': {'message': 'Prompt delete success'}
-        }
-        return JsonResponse(response, status=status.HTTP_200_OK)
+
+        try:
+            Prompt.objects.get(pk=prompt_id)
+            response = {
+                'is_success': False,
+                'result': {'message': 'Prompt-answer create fail..'}
+            }
+            return JsonResponse(response, status=status.HTTP_400_BAD_REQUEST)
+
+        except Prompt.DoesNotExist:
+            response = {
+                'is_success': True,
+                'result': {'message': 'Prompt-answer create  success'}
+            }
+            return JsonResponse(response,  status=status.HTTP_200_OK)
