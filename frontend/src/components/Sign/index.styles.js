@@ -23,10 +23,18 @@ export const AuthSubmit = styled.button`
   gap: 5px;
 `
 
-export const CheckButton = styled.button`
+export const CheckButton = styled.div`
   height: 45px;
   width: 100px;
   margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #F0F0F0;
+
+  &:hover {
+    cursor: pointer;
+  }
 `
 
 export const ErrorMessage = styled.p`

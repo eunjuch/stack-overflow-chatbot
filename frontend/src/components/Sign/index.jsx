@@ -6,11 +6,29 @@ import { ReactComponent as PasswordIcon } from '../../assets/sign_password.svg'
 import { ReactComponent as ConfirmIcon } from '../../assets/sign_confirm.svg'
 import { ReactComponent as SignInIcon } from '../../assets/sign_signin.svg'
 import { ReactComponent as SignUpIcon } from '../../assets/sign_signup.svg'
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 
 export const SignIn = () => {
   const { register, handleSubmit, formState: { errors } } = useForm()
+
   const onSignInSubmit = (data) => {
-    console.log(data);
+    axios.post('http://localhost:8000/user/login/', {
+      user_id: data.id,
+      password: data.pw,
+    }).then((res) => {
+      // console.log(res.data);
+      if (res.data.is_success === true) {
+        window.localStorage.setItem('isLogin', true);
+        window.localStorage.setItem('accessToken', res.data.result.access);
+        window.location.replace('/');
+      }
+    }).catch((err) => {
+      console.log(err);
+      if (err)
+        window.alert("Failed to sign in!");
+    })
   }
 
   return (
@@ -34,22 +52,53 @@ export const SignIn = () => {
 
 export const SignUp = () => {
   const { register, handleSubmit, formState: { errors }, getValues } = useForm()
-  const [idOverlap, setIdOverlap] = useState(false);
-  //SignUpSubmit 시 idcheck 됐는지 확인하고 넘김
+  const [idCheck, setIdCheck] = useState(false);
+  // const navigate = useNavigate();
 
   const onSignUpSubmit = (data) => {
     console.log(data);
+    if (!idCheck) {
+      window.alert("You should check your ID!");
+      return;
+    }
+    else {
+      axios.post('http://localhost:8000/user/signup/', {
+        user_id: data.id,
+        name: data.username,
+        password: data.pw,
+      }).then((res) => {
+        console.log(res);
+        window.alert("Succeed to Sign up!");
+        // navigate('/auth');
+        window.location.replace('/auth');
+      }).catch((err) => {
+        window.alert("Failed to Sign up!");
+        console.log(err);
+      })
+    }
   }
-  const checkId = (id) => {
-    console.log("current ID ::", id);
-    //ID 중복체크 하고 체크여부 변수 변경
-    window.localStorage.setItem('isLogin', true);
-    window.localStorage.setItem('loginID', id);
+
+  const checkId = () => {
+    const id = getValues("id");
+    axios.post('http://localhost:8000/user/check-user-id/', {
+      user_id: id,
+    }).then((res) => {
+      console.log(res);
+      if (res.data.result.is_duplicate === true) {
+        setIdCheck(false);
+        window.alert("This ID is not available!");
+      } else {
+        setIdCheck(true);
+        window.alert("This ID is available!");
+      }
+    }).catch((err) => {
+      window.alert("You should enter your ID!");
+      console.log(err);
+    })
   }
 
   return (
     <form onSubmit={handleSubmit(onSignUpSubmit)} style={{ display: 'flex', flexDirection: 'column' }}>
-      {/* <UserIcon /> */}
       <S.InputWrapper>
         <S.IconWrapper><UserIcon /></S.IconWrapper>
         <S.AuthInput placeholder="Username" {...register("username", {
@@ -67,7 +116,7 @@ export const SignUp = () => {
             minLength: { value: 4, message: 'ID must have at least 4 characters' },
           })} />
         </S.InputWrapper>
-        <S.CheckButton onClick={checkId(getValues("id"))}>CHECK</S.CheckButton>
+        <S.CheckButton onClick={checkId}>CHECK</S.CheckButton>
       </div>
       {errors.id && <S.ErrorMessage>{errors.id.message}</S.ErrorMessage>}
       <S.InputWrapper>
@@ -75,7 +124,7 @@ export const SignUp = () => {
         <S.AuthInput placeholder="Password" type="password" {...register("pw", {
           required: 'You must specify Password',
           maxLength: { value: 15, message: 'Password must have less than 15 characters' },
-          minLength: { value: 8, message: 'Password must have at least 4 characters' }
+          minLength: { value: 8, message: 'Password must have at least 8 characters' }
         })} />
       </S.InputWrapper>
       {errors.pw && <S.ErrorMessage>{errors.pw.message}</S.ErrorMessage>}

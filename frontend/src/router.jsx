@@ -5,8 +5,8 @@ import DashBoardPage from './pages/DashboardPage';
 import SignPage from './pages/SignPage';
 import OnboardingPage from './pages/OnboardingPage';
 
-// const isLogin = window.localStorage.getItem('isLogin');
-const isLogin = false;
+const isLogin = window.localStorage.getItem('isLogin');
+// const isLogin = false;
 
 const router = createBrowserRouter([
   {
@@ -16,11 +16,9 @@ const router = createBrowserRouter([
         <Outlet />
       </AuthLayout>
     ) : (
-      <div>
-        <BaseLayout>
-          <Outlet />
-        </BaseLayout>
-      </div>
+      <BaseLayout>
+        <Outlet />
+      </BaseLayout>
     ),
     errorElement: <div>NotFound</div>,
     children: [
