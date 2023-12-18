@@ -18,10 +18,12 @@ export const SignIn = () => {
       user_id: data.id,
       password: data.pw,
     }).then((res) => {
-      // console.log(res.data);
+      console.log(res.data);
       if (res.data.is_success === true) {
         window.localStorage.setItem('isLogin', true);
-        window.localStorage.setItem('accessToken', res.data.result.access);
+        window.localStorage.setItem('accessToken', res.data.result.tokens.access);
+        window.localStorage.setItem('refreshToken', res.data.result.tokens.refresh);
+        window.localStorage.setItem('username', res.data.result.user_id);
         window.location.replace('/');
       }
     }).catch((err) => {

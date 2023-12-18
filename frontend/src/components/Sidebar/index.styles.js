@@ -26,7 +26,7 @@ export const Button = styled.button`
   width: 100%;
   height: 40px;
   font-size: 16px;
-  border-radius: 4px;
+  border-radius: 24px;
   font-weight: 600;
 `;
 
