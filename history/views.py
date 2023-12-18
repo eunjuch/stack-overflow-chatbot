@@ -248,5 +248,3 @@ class PromptDeleteView(APIView):
             }
             return JsonResponse(response,  status=status.HTTP_200_OK)
 
-        return JsonResponse(response, status=status.HTTP_200_OK)
-
