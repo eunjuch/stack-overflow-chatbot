@@ -176,7 +176,7 @@ class LogoutTest(TestCase):
         data = {
             'refresh': refresh
         }
-        response = client.post('/user/logout/', json.dumps(data), content_type='application/json', **{'HTTP_AUTHORIZATION': f'Bearer {access}'})
+        response = client.post('/user/logout/', json.dumps(data), content_type='application/json')
 
         self.assertEqual(response.status_code, 205)
 
