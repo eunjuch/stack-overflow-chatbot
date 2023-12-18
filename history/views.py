@@ -19,6 +19,7 @@ client = OpenAI(organization='org-o3IP2SrQdimuzRhvZu8A07Bp', api_key=OpenAI.api_
 
 class HistoryView(APIView):
     permission_classes = (IsAuthenticated,)
+
     def post(self, request, *args, **kwargs):
         form = HistoryForm(request.POST, request.FILES)
 
@@ -50,8 +51,10 @@ class HistoryView(APIView):
         }
         return JsonResponse(response, status=status.HTTP_200_OK)
 
+
 class HistoryDeleteGetView(APIView):
     permission_classes = (IsAuthenticated,)
+
     def get(self, request, history_id):
         prompt_list = list(Prompt.objects.filter(history_id=history_id).values())
         history: History
@@ -127,6 +130,7 @@ class HistoryDeleteGetView(APIView):
             'result': {'message': 'History delete success'}
         }
         return JsonResponse(response, status=status.HTTP_200_OK)
+
 
 class PromptPostView(APIView):
     permission_classes = (IsAuthenticated,)
@@ -209,7 +213,7 @@ class PromptPostView(APIView):
             # Response 수신
             answer_tmp = messages.data[0].content[0].text.value
             answer = answer_tmp[answer_tmp.find('\n') + 1:answer_tmp.rfind('\n')]
-            #language = history.file.name[history.file.name.find('.') + 1:]
+            # language = history.file.name[history.file.name.find('.') + 1:]
             print(answer)
 
         prompt = Prompt.objects.create(
@@ -233,23 +237,23 @@ class PromptPostView(APIView):
             }
             return JsonResponse(response, status=status.HTTP_400_BAD_REQUEST)
 
-    class PromptDeleteView(APIView):
-        permission_classes = (IsAuthenticated,)
+class PromptDeleteView(APIView):
+    permission_classes = (IsAuthenticated,)
 
-        def delete(self, request, prompt_id):
+    def delete(self, request, prompt_id):
 
-            try:
-                prompt = get_object_or_404(Prompt, pk=prompt_id)
-                prompt.delete()
-                response = {
-                    'is_success': True,
-                    'result': prompt
-                }
-                return JsonResponse(response, status=status.HTTP_200_OK)
+        try:
+            prompt = get_object_or_404(Prompt, pk=prompt_id)
+            prompt.delete()
+            response = {
+                'is_success': True,
+                'result': prompt
+            }
+            return JsonResponse(response, status=status.HTTP_200_OK)
 
-            except Prompt.DoesNotExist:
-                response = {
-                    'is_success': False,
-                    'message': 'Prompt-answer create fail..'
-                }
-                return JsonResponse(response, status=status.HTTP_400_BAD_REQUEST)
+        except Prompt.DoesNotExist:
+            response = {
+                'is_success': False,
+                'message': 'Prompt-answer create fail..'
+            }
+            return JsonResponse(response, status=status.HTTP_400_BAD_REQUEST)
