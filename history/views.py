@@ -34,7 +34,7 @@ class HistoryView(APIView):
                 'is_success': True,
                 'result': {'message': 'History post success'}
             }
-            return JsonResponse(response, status=status.HTTP_201_CREATED)
+            return JsonResponse(response, status=status.HTTP_200_OK)
         else:
             response = {
                 'is_success': False,

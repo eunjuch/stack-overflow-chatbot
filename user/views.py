@@ -1,6 +1,7 @@
 # views.py
 
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.hashers import make_password
 from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
@@ -35,7 +36,7 @@ class SignUpView(APIView):
                 'is_success': True,
                 'result': serializer.data
             }
-            return Response(response, status=status.HTTP_201_CREATED)
+            return Response(response, status=status.HTTP_200_OK)
         else:
             response = {
                 'is_success': False,
@@ -73,9 +74,13 @@ class LoginView(APIView):
         if serializer.is_valid():
             user = serializer.validated_data['user']
             tokens = get_tokens_for_user(user)
+            customUser = get_object_or_404(CustomUser, user_id=request.data['user_id'])
             response = {
                 'is_success': True,
-                'result': tokens
+                'result': {
+                    'tokens': tokens,
+                    'user_id': customUser.user_id
+                }
             }
             return Response(response, status=status.HTTP_200_OK)
         else:
