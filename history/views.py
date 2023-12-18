@@ -212,39 +212,44 @@ class PromptPostView(APIView):
             #language = history.file.name[history.file.name.find('.') + 1:]
             print(answer)
 
-
-        Prompt.objects.create(
+        prompt = Prompt.objects.create(
             history_id=data["history_id"],
             user_message=data["user_message"],
             answer=answer
         )
 
-        response = {
-            'is_success': True,
-            'result': {'message': 'Prompt-answer create success'}
-        }
-
-        return JsonResponse(response, status=status.HTTP_200_OK)
-
-class PromptDeleteView(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def delete(self, request, prompt_id):
-        prompt = get_object_or_404(Prompt, pk=prompt_id)
-        prompt.delete()
-
         try:
-            Prompt.objects.get(pk=prompt_id)
+            Prompt.objects.get(pk=prompt.pk)
             response = {
-                'is_success': False,
-                'result': {'message': 'Prompt-answer create fail..'}
+                'is_success': True,
+                'result': prompt
             }
-            return JsonResponse(response, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(response, status=status.HTTP_200_OK)
 
         except Prompt.DoesNotExist:
             response = {
-                'is_success': True,
-                'result': {'message': 'Prompt-answer create  success'}
+                'is_success': False,
+                'message': 'Prompt-answer create fail..'
             }
-            return JsonResponse(response,  status=status.HTTP_200_OK)
+            return JsonResponse(response, status=status.HTTP_400_BAD_REQUEST)
 
+    class PromptDeleteView(APIView):
+        permission_classes = (IsAuthenticated,)
+
+        def delete(self, request, prompt_id):
+
+            try:
+                prompt = get_object_or_404(Prompt, pk=prompt_id)
+                prompt.delete()
+                response = {
+                    'is_success': True,
+                    'result': prompt
+                }
+                return JsonResponse(response, status=status.HTTP_200_OK)
+
+            except Prompt.DoesNotExist:
+                response = {
+                    'is_success': False,
+                    'message': 'Prompt-answer create fail..'
+                }
+                return JsonResponse(response, status=status.HTTP_400_BAD_REQUEST)
