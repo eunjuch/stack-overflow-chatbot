@@ -32,3 +32,18 @@ export const ErrorMessage = styled.p`
   font-size: 13px;
   margin: 0px;
 `
+
+export const InputWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+`
+
+export const IconWrapper = styled.div`
+  background-color: white;
+  height: 45px;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+`
