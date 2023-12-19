@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 const HistoryFormModal = ({ handleClickModalClose, setIsSelectedId, setList, width, height }) => {
   const [extensionName, setExtensionName] = useState(null);
   const [file, setFile] = useState(null);
+  const [fileName,setFileName] = useState('');
   const [historyName, setHistoryName] = useState('');
   const navi = useNavigate();
 
@@ -15,8 +16,8 @@ const HistoryFormModal = ({ handleClickModalClose, setIsSelectedId, setList, wid
     setHistoryName(event.target.value);
   };
   const handleChangeFileInput = (event) => {
-    console.log(event);
     const arr = event.target.value.split('\\');
+    const file = arr[arr.length - 1];
     const extension = arr[arr.length - 1].split('.')[1];
     setExtensionName(extension);
     setFile(event.target.files[0]);
@@ -52,11 +53,23 @@ const HistoryFormModal = ({ handleClickModalClose, setIsSelectedId, setList, wid
   return (
     <ModalFrame onClick={handleClickModalClose} width={width} height={height}>
       <S.Wrapper>
-        <Input type="text" label="Title" placeholder="히스토리 제목을 입력해주세요." onChange={handleChangeTextInput} />
-        <Input type="file" extensionName={extensionName} label="Code" placeholder="" onChange={handleChangeFileInput} />
+        <Input type="text" placeholder="History Title" onChange={handleChangeTextInput} />
+        <S.FileInputWrapper>
+          <S.FilenameInput value={fileName} disabled="disabled" placeholder='Choose File' />
+          <label for="FileInputID">Upload</label>
+          <S.HiddenInput type="file" onChange={handleChangeFileInput} id="FileInputID" />
+        </S.FileInputWrapper>
         <S.Button onClick={handleClick}>Add New History</S.Button>
       </S.Wrapper>
     </ModalFrame>
+
+    // <ModalFrame onClick={handleClickModalClose} width={width} height={height}>
+    // <S.Wrapper>
+    //   <Input type="text" label="Title" placeholder="히스토리 제목을 입력해주세요." onChange={() => {}} />
+    //   <Input type="file" extensionName={extensionName} label="Code" placeholder="" onChange={handleChangeFileInput} />
+    //   <S.Button>Add New History</S.Button>
+    // </S.Wrapper>
+    // </ModalFrame>
   );
 };
 

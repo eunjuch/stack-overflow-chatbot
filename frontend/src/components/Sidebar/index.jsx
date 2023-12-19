@@ -3,6 +3,7 @@ import * as S from './index.styles.js';
 import { ReactComponent as LogoIcon } from '../../assets/logo.svg';
 import useModal from '../../hooks/useModal.js';
 import HistoryFormModal from '../Modal/HistoryFormModal/index.jsx';
+import UserInfo from '../UserInfo/index.jsx';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { api } from '../../api/axiosService.js';
@@ -43,6 +44,7 @@ const Sidebar = () => {
       />
       <S.Bottom>
         <S.Button onClick={handleClickModalOpen}>Add History</S.Button>
+        <UserInfo />
       </S.Bottom>
       {isOpen && (
         <HistoryFormModal
