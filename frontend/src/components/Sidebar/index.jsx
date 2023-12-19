@@ -17,12 +17,14 @@ const Sidebar = () => {
     setIsSelectedId(id);
   };
 
+  const fetchHistoryList = async () => {
+    const data = await api.get('http://127.0.0.1:8000/history/histories/');
+    setList(data.data.result.history_list);
+  };
+
   useEffect(() => {
-    api.get('http://127.0.0.1:8000/history/histories/').then(({ data: { result: { history_list } } }) => {
-      setList(history_list)
-    });
+    fetchHistoryList();
   }, []);
-  console.log(list);
   const navigate = useNavigate();
   return (
     <S.Layout>

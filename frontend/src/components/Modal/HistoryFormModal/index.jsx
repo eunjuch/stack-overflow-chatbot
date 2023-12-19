@@ -31,7 +31,10 @@ const HistoryFormModal = ({ handleClickModalClose, setIsSelectedId, setList, wid
     formData.append('file', file);
 
     const {
-      data: { is_success, result: { history_id } },
+      data: {
+        is_success,
+        result: { history_id },
+      },
     } = await api.post('http://127.0.0.1:8000/history/histories/', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -39,7 +42,7 @@ const HistoryFormModal = ({ handleClickModalClose, setIsSelectedId, setList, wid
     });
     if (is_success) {
       const data = await api.get('http://127.0.0.1:8000/history/histories/');
-      // setList(histories);
+      setList(data.data.result.history_list);
       handleClickModalClose();
       navi(`/history/${history_id}`);
       setIsSelectedId(history_id);
@@ -54,7 +57,7 @@ const HistoryFormModal = ({ handleClickModalClose, setIsSelectedId, setList, wid
       <S.Wrapper>
         <Input type="text" placeholder="History Title" onChange={handleChangeTextInput} />
         <S.FileInputWrapper>
-          <S.FilenameInput value={fileName} disabled="disabled" placeholder='Choose File' />
+          <S.FilenameInput value={fileName} disabled="disabled" placeholder="Choose File" />
           <label for="FileInputID">Upload</label>
           <S.HiddenInput type="file" onChange={handleChangeFileInput} id="FileInputID" />
         </S.FileInputWrapper>

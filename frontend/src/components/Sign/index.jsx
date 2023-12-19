@@ -16,26 +16,24 @@ export const SignIn = () => {
     formState: { errors },
   } = useForm();
 
-  const onSignInSubmit = (data) => {
-    axios
-      .post('http://localhost:8000/user/login/', {
-        user_id: data.id,
-        password: data.pw,
-      })
-      .then((res) => {
-        console.log(res.data);
-        if (res.data.is_success === true) {
-          window.localStorage.setItem('isLogin', true);
-          window.localStorage.setItem('accessToken', res.data.result.tokens.access);
-          window.localStorage.setItem('refreshToken', res.data.result.tokens.refresh);
-          window.localStorage.setItem('username', res.data.result.user_id);
-          window.location.replace('/');
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        if (err) window.alert('Failed to sign in!');
-      });
+  const onSignInSubmit = async (data) => {
+    const {
+      data: { is_success, result },
+    } = await axios.post('http://localhost:8000/user/login/', {
+      user_id: data.id,
+      password: data.pw,
+    });
+    console.log(result);
+
+    if (is_success) {
+      window.localStorage.setItem('isLogin', true);
+      window.localStorage.setItem('accessToken', result.tokens.access);
+      window.localStorage.setItem('refreshToken', result.tokens.refresh);
+      window.localStorage.setItem('username', result.user_name);
+      window.location.replace('/');
+    } else {
+      window.alert('Failed to sign in!');
+    }
   };
 
   return (
@@ -62,6 +60,7 @@ export const SignIn = () => {
 };
 
 export const SignUp = () => {
+  const navi = useNavigate();
   const {
     register,
     handleSubmit,
@@ -84,10 +83,9 @@ export const SignUp = () => {
           password: data.pw,
         })
         .then((res) => {
-          console.log(res);
           window.alert('Succeed to Sign up!');
           // navigate('/auth');
-          window.location.replace('/auth');
+          navi('/auth');
         })
         .catch((err) => {
           window.alert('Failed to Sign up!');
@@ -104,7 +102,7 @@ export const SignUp = () => {
       })
       .then((res) => {
         console.log(res);
-        if (res.data.result.is_duplicate === true) {
+        if (res.data.is_duplicate === true) {
           setIdCheck(false);
           window.alert('This ID is not available!');
         } else {
@@ -145,9 +143,14 @@ export const SignUp = () => {
               maxLength: { value: 15, message: 'ID must have less than 15 characters' },
               minLength: { value: 4, message: 'ID must have at least 4 characters' },
             })}
+            onChange={() => {
+              setIdCheck(false);
+            }}
           />
         </S.InputWrapper>
-        <S.CheckButton onClick={checkId}>CHECK</S.CheckButton>
+        <S.CheckButton idCheck={idCheck} onClick={checkId}>
+          {idCheck ? 'CHECKED' : 'CHECK'}
+        </S.CheckButton>
       </div>
       {errors.id && <S.ErrorMessage>{errors.id.message}</S.ErrorMessage>}
       <S.InputWrapper>

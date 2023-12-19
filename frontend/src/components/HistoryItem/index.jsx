@@ -10,10 +10,12 @@ const HistoryItem = ({ item: { id, title }, onClick, selected, setList, setIsSel
   const handleClick = async () => {
     await api.delete(`http://127.0.0.1:8000/history/histories/${id}`);
     const {
-      data: { histories },
+      data: {
+        result: { history_list },
+      },
     } = await api.get('http://127.0.0.1:8000/history/histories/');
     setIsSelectedId(null);
-    setList(histories);
+    setList(history_list);
     navigate('/');
   };
 
