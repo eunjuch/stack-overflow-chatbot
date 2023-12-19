@@ -16,6 +16,7 @@ export const Logo = styled.div`
   font-size: 24px;
   font-weight: 600;
   padding-left: 16px;
+  cursor: pointer;
 `;
 
 export const Bottom = styled.div`
