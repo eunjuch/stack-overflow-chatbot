@@ -1,10 +1,12 @@
 import { createGlobalStyle } from 'styled-components';
+import "./Fonts/Font.css"
 
 const GlobalStyle = createGlobalStyle`
  *{
    padding:0;
    margin:0;
    box-sizing: border-box;
+   font-family: 'Inter';
  }
  
  html {
