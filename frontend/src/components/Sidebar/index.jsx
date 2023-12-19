@@ -3,6 +3,7 @@ import * as S from './index.styles.js';
 import { ReactComponent as LogoIcon } from '../../assets/logo.svg';
 import useModal from '../../hooks/useModal.js';
 import HistoryFormModal from '../Modal/HistoryFormModal/index.jsx';
+import UserInfo from '../UserInfo/index.jsx';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -28,6 +29,7 @@ const Sidebar = () => {
       <HistoryList isSelectedId={isSelectedId} onClick={handleClickItem} />
       <S.Bottom>
         <S.Button onClick={handleClickModalOpen}>Add History</S.Button>
+        <UserInfo />
       </S.Bottom>
       {isOpen && <HistoryFormModal handleClickModalClose={handleClickModalClose} width="400px" height="auto" />}
     </S.Layout>
