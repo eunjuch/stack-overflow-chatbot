@@ -1,9 +1,22 @@
 import * as S from './index.styles.js';
 import { ReactComponent as MessageIcon } from '../../assets/message.svg';
+import { ReactComponent as DeleteIcon } from '../../assets/delete.svg';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../../api/axiosService.js';
 
-const HistoryItem = ({ item: { id, title }, onClick, selected }) => {
+const HistoryItem = ({ item: { id, title }, onClick, selected, setList, setIsSelectedId }) => {
   const navigate = useNavigate();
+
+  const handleClick = async () => {
+    await api.delete(`http://127.0.0.1:8000/history/histories/${id}`);
+    const {
+      data: { histories },
+    } = await api.get('http://127.0.0.1:8000/history/histories/');
+    setIsSelectedId(null);
+    setList(histories);
+    navigate('/');
+  };
+
   return (
     <S.Item
       onClick={() => {
@@ -14,6 +27,7 @@ const HistoryItem = ({ item: { id, title }, onClick, selected }) => {
     >
       <MessageIcon />
       <S.Title>{title}</S.Title>
+      {selected && <DeleteIcon onClick={handleClick} />}
     </S.Item>
   );
 };

@@ -2,21 +2,59 @@ import { useState } from 'react';
 import Input from '../../Input/index.jsx';
 import ModalFrame from '../ModalFrame';
 import * as S from './index.styles.js';
+import { api } from '../../../api/axiosService.js';
+import { useNavigate } from 'react-router-dom';
 
-const HistoryFormModal = ({ handleClickModalClose, width, height }) => {
+const HistoryFormModal = ({ handleClickModalClose, setIsSelectedId, setList, width, height }) => {
   const [extensionName, setExtensionName] = useState(null);
-  const handleChangeTextInput = () => {};
+  const [file, setFile] = useState(null);
+  const [historyName, setHistoryName] = useState('');
+  const navi = useNavigate();
+
+  const handleChangeTextInput = (event) => {
+    setHistoryName(event.target.value);
+  };
   const handleChangeFileInput = (event) => {
+    console.log(event);
     const arr = event.target.value.split('\\');
     const extension = arr[arr.length - 1].split('.')[1];
     setExtensionName(extension);
+    setFile(event.target.files[0]);
+  };
+  const handleClick = async () => {
+    const formData = new FormData();
+
+    formData.append('user_id', 'kamoo');
+    formData.append('title', historyName);
+    formData.append('file', file);
+
+    const {
+      data: { message, historyId },
+    } = await api.post('http://127.0.0.1:8000/history/histories/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    if (message === 'SUCCESS') {
+      const {
+        data: { histories },
+      } = await api.get('http://127.0.0.1:8000/history/histories/');
+      setList(histories);
+      handleClickModalClose();
+      navi(`/history/${historyId}`);
+      setIsSelectedId(historyId);
+    } else {
+      handleClickModalClose();
+      navi(`/`);
+      setIsSelectedId(null);
+    }
   };
   return (
     <ModalFrame onClick={handleClickModalClose} width={width} height={height}>
       <S.Wrapper>
-        <Input type="text" label="Title" placeholder="히스토리 제목을 입력해주세요." onChange={() => {}} />
+        <Input type="text" label="Title" placeholder="히스토리 제목을 입력해주세요." onChange={handleChangeTextInput} />
         <Input type="file" extensionName={extensionName} label="Code" placeholder="" onChange={handleChangeFileInput} />
-        <S.Button>Add New History</S.Button>
+        <S.Button onClick={handleClick}>Add New History</S.Button>
       </S.Wrapper>
     </ModalFrame>
   );

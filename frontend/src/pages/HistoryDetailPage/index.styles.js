@@ -37,30 +37,44 @@ export const Line = styled.div`
 
 export const ChatBox = styled.div`
   flex: 1;
-
   overflow-y: scroll;
+  scroll-behavior: smooth;
 `;
 
 export const ChatHistory = styled.div``;
 
 export const Question = styled.div`
-  width: 70%;
+  width: 900px;
   padding: 16px 12px;
   font-size: 14px;
   font-weight: 500;
   border-radius: 8px;
   background-color: #eeeeee;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  position: relative;
+  svg {
+    width: 13px;
+    stroke: black;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
 `;
 
 export const Answer = styled.div`
   width: 100%;
   display: flex;
   justify-content: end;
-
+  margin-bottom: 36px;
   div {
-    width: 70%;
+    width: 900px;
+    padding: 16px 12px;
+    border-radius: 8px;
+    background-color: ${(props) => (props.code ? 'none' : '#392b6326')};
     pre {
+      width: 100%;
       border-radius: 8px;
     }
   }

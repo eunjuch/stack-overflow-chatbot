@@ -6,11 +6,18 @@ export const Item = styled.li`
   display: flex;
   align-items: center;
   gap: 8px;
-  padding-left: 16px;
+  padding: 0 16px;
   background-color: ${(props) => (props.selected ? '#807AB526' : 'parent')};
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
   cursor: pointer;
+
+  svg:first-child {
+    width: 25px;
+  }
+  svg:last-child {
+    width: 12px;
+  }
 `;
 
 export const Title = styled.div`
