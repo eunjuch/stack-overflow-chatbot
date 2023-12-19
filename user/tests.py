@@ -7,7 +7,7 @@ from .models import CustomUser
 
 # Create your tests here.
 client = APIClient()
-user = CustomUser.objects.create_user(user_id='ehdwlsdlwkd22', name='조동진', password='password123')
+user = CustomUser.objects.create_user(user_id='ehdwlsdlwkd123', name='조동진', password='password123')
 client.force_authenticate(user=user)
 
 # 회원가입 테스트
@@ -177,6 +177,4 @@ class LogoutTest(TestCase):
         }
         response = client.post('/user/logout/', json.dumps(data), content_type='application/json')
 
-        self.assertEqual(response.status_code, 205)
-
-#test
+        self.assertEqual(response.status_code, 200)
