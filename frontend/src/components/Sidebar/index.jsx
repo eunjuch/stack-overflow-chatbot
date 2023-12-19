@@ -18,11 +18,11 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
-    api.get('http://127.0.0.1:8000/history/histories/').then((data) => {
-      setList(data.data.histories);
+    api.get('http://127.0.0.1:8000/history/histories/').then(({ data: { result: { history_list } } }) => {
+      setList(history_list)
     });
   }, []);
-
+  console.log(list);
   const navigate = useNavigate();
   return (
     <S.Layout>

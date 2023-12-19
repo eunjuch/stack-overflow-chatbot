@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 const HistoryFormModal = ({ handleClickModalClose, setIsSelectedId, setList, width, height }) => {
   const [extensionName, setExtensionName] = useState(null);
   const [file, setFile] = useState(null);
-  const [fileName,setFileName] = useState('');
+  const [fileName, setFileName] = useState('');
   const [historyName, setHistoryName] = useState('');
   const navi = useNavigate();
 
@@ -21,6 +21,7 @@ const HistoryFormModal = ({ handleClickModalClose, setIsSelectedId, setList, wid
     const extension = arr[arr.length - 1].split('.')[1];
     setExtensionName(extension);
     setFile(event.target.files[0]);
+    setFileName(file);
   };
   const handleClick = async () => {
     const formData = new FormData();
@@ -30,20 +31,18 @@ const HistoryFormModal = ({ handleClickModalClose, setIsSelectedId, setList, wid
     formData.append('file', file);
 
     const {
-      data: { message, historyId },
+      data: { is_success, result: { history_id } },
     } = await api.post('http://127.0.0.1:8000/history/histories/', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
-    if (message === 'SUCCESS') {
-      const {
-        data: { histories },
-      } = await api.get('http://127.0.0.1:8000/history/histories/');
-      setList(histories);
+    if (is_success) {
+      const data = await api.get('http://127.0.0.1:8000/history/histories/');
+      // setList(histories);
       handleClickModalClose();
-      navi(`/history/${historyId}`);
-      setIsSelectedId(historyId);
+      navi(`/history/${history_id}`);
+      setIsSelectedId(history_id);
     } else {
       handleClickModalClose();
       navi(`/`);

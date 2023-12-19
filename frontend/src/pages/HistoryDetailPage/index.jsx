@@ -13,13 +13,15 @@ const HistoryDetailPage = () => {
   const [history, setHistory] = useState(null);
   const [loading, setLoading] = useState(true);
   const chatHistoryRef = useRef(null);
+  console.log(historyId);
 
   const postCreatePromptAPI = async (history_id, message) => {
     setLoading(false);
-    await api.post('http://127.0.0.1:8000/history/histories/prompts/', {
+    const data = await api.post('http://127.0.0.1:8000/history/histories/prompts/', {
       history_id: Number(history_id),
       user_message: message,
     });
+    console.log(data);
     getHistoryDetail();
     setLoading(true);
     setQuestion('');
@@ -27,16 +29,15 @@ const HistoryDetailPage = () => {
 
   const getHistoryDetail = async () => {
     const { data } = await api.get(`http://127.0.0.1:8000/history/histories/${historyId}`);
-    setHistory(data);
+    setHistory(data.result);
   };
 
   const handleClickDeletePrompt = async (index) => {
     await api.delete(`http://127.0.0.1:8000/history/histories/prompts/${history.prompt_list[index].id}`);
     const { data } = await api.get(`http://127.0.0.1:8000/history/histories/${historyId}`);
-    setHistory(data);
+    setHistory(data.result);
   };
 
-  console.log(history);
   useEffect(() => {
     if (chatHistoryRef.current) {
       chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
@@ -45,7 +46,7 @@ const HistoryDetailPage = () => {
 
   useEffect(() => {
     getHistoryDetail();
-  }, [historyId]);
+  }, [historyId])
 
   const handleChange = (e) => {
     setQuestion(e.target.value);
@@ -72,7 +73,7 @@ const HistoryDetailPage = () => {
       <S.ChatBox ref={chatHistoryRef}>
         <S.ChatHistory>
           {history?.prompt_list &&
-            history?.prompt_list.map((item, index) => {
+            history?.prompt_list?.map((item, index) => {
               <>
                 <S.Question>
                   {item.user_message}
@@ -88,29 +89,29 @@ const HistoryDetailPage = () => {
               </>;
             })}
           {history?.language
-            ? history?.prompt_list.map((item, index) => (
-                <>
-                  <S.Question>
-                    {item.user_message}
-                    <DeleteIcon onClick={() => handleClickDeletePrompt(index)} />
-                  </S.Question>
-                  <S.Answer code="true">
-                    <div>
-                      <SyntaxHighlighter language={history?.language} style={docco}>
-                        {item.answer === '' ? '다시 한번 메시지를 보내주세요.' : item.answer}
-                      </SyntaxHighlighter>
-                    </div>
-                  </S.Answer>
-                </>
-              ))
-            : history?.prompt_list.map((item) => (
-                <>
-                  <S.Question>{item.user_message}</S.Question>
-                  <S.Answer>
-                    <div>{item.answer === '' ? '다시 한번 메시지를 보내주세요.' : item.answer}</div>
-                  </S.Answer>
-                </>
-              ))}
+            ? history?.prompt_list?.map((item, index) => (
+              <>
+                <S.Question>
+                  {item.user_message}
+                  <DeleteIcon onClick={() => handleClickDeletePrompt(index)} />
+                </S.Question>
+                <S.Answer code="true">
+                  <div>
+                    <SyntaxHighlighter language={history?.language} style={docco}>
+                      {item.answer === '' ? '다시 한번 메시지를 보내주세요.' : item.answer}
+                    </SyntaxHighlighter>
+                  </div>
+                </S.Answer>
+              </>
+            ))
+            : history?.prompt_list?.map((item) => (
+              <>
+                <S.Question>{item.user_message}</S.Question>
+                <S.Answer>
+                  <div>{item.answer === '' ? '다시 한번 메시지를 보내주세요.' : item.answer}</div>
+                </S.Answer>
+              </>
+            ))}
         </S.ChatHistory>
       </S.ChatBox>
       <S.ChatInputBox>

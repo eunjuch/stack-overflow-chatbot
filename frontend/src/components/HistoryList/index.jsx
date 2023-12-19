@@ -5,7 +5,7 @@ const HistoryList = ({ list, isSelectedId, onClick, setList, setIsSelectedId }) 
   return (
     <S.HistoryContent>
       <S.List>
-        {list.map((item) => (
+        {list && list.map((item) => (
           <HistoryItem
             key={item.id}
             onClick={onClick}
