@@ -28,6 +28,27 @@ class SignUpView(APIView):
 
     def post(self, request):
         data = request.data
+
+        # Vaidation
+        if len(str(data['user_id'])) < 4 or len(str(data['user_id'])) > 15:
+            response = {
+                'is_success': False,
+                'message': '아이디는 4 ~ 15자입니다.'
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        if len(str(data['password'])) < 8 or len(str(data['password'])) > 15:
+            response = {
+                'is_success': False,
+                'message': '비밀번호는 8 ~ 15자입니다.'
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        if len(str(data['name'])) < 2 or len(str(data['name'])) > 15:
+            response = {
+                'is_success': False,
+                'message': '이름은 2 ~ 15자입니다.'
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
         data['password'] = make_password(data['password'])
         serializer = UserSerializer(data=data)
         if serializer.is_valid():
