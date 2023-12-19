@@ -12,7 +12,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .serializers import UserSerializer, UserLoginSerializer, CheckUserIdSerializer
 from user.models import CustomUser
-
+#test
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
     access = AccessToken.for_user(user)
