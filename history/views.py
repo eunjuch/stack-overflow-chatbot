@@ -244,19 +244,21 @@ class PromptDeleteView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def delete(self, request, prompt_id):
+        prompt = get_object_or_404(Prompt, pk=prompt_id)
+        prompt.delete()
 
         try:
-            prompt = get_object_or_404(Prompt, pk=prompt_id)
-            prompt.delete()
+            Prompt.objects.get(pk=prompt_id)
             response = {
-                'is_success': True,
-                'result': prompt
+                'is_success': False,
+                'result': {'message': 'Prompt-answer create fail..'}
             }
-            return JsonResponse(response, status=status.HTTP_200_OK)
+            return JsonResponse(response, status=status.HTTP_400_BAD_REQUEST)
 
         except Prompt.DoesNotExist:
             response = {
-                'is_success': False,
-                'message': 'Prompt-answer create fail..'
+                'is_success': True,
+                'result': {'message': 'Prompt-answer create  success'}
             }
-            return JsonResponse(response, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(response, status=status.HTTP_200_OK)
+
