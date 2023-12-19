@@ -2,29 +2,64 @@ import { useState } from 'react';
 import Input from '../../Input/index.jsx';
 import ModalFrame from '../ModalFrame';
 import * as S from './index.styles.js';
+import { api } from '../../../api/axiosService.js';
+import { useNavigate } from 'react-router-dom';
 
-const HistoryFormModal = ({ handleClickModalClose, width, height }) => {
+const HistoryFormModal = ({ handleClickModalClose, setIsSelectedId, setList, width, height }) => {
   const [extensionName, setExtensionName] = useState(null);
-  const [fileName, setFileName] = useState("");
-  const handleChangeTextInput = () => { };
+  const [file, setFile] = useState(null);
+  const [fileName,setFileName] = useState('');
+  const [historyName, setHistoryName] = useState('');
+  const navi = useNavigate();
+
+  const handleChangeTextInput = (event) => {
+    setHistoryName(event.target.value);
+  };
   const handleChangeFileInput = (event) => {
-    console.log(event.target.value);
     const arr = event.target.value.split('\\');
     const file = arr[arr.length - 1];
     const extension = arr[arr.length - 1].split('.')[1];
-    setFileName(file);
     setExtensionName(extension);
+    setFile(event.target.files[0]);
+  };
+  const handleClick = async () => {
+    const formData = new FormData();
+
+    formData.append('user_id', 'kamoo');
+    formData.append('title', historyName);
+    formData.append('file', file);
+
+    const {
+      data: { message, historyId },
+    } = await api.post('http://127.0.0.1:8000/history/histories/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    if (message === 'SUCCESS') {
+      const {
+        data: { histories },
+      } = await api.get('http://127.0.0.1:8000/history/histories/');
+      setList(histories);
+      handleClickModalClose();
+      navi(`/history/${historyId}`);
+      setIsSelectedId(historyId);
+    } else {
+      handleClickModalClose();
+      navi(`/`);
+      setIsSelectedId(null);
+    }
   };
   return (
     <ModalFrame onClick={handleClickModalClose} width={width} height={height}>
       <S.Wrapper>
-        <Input type="text" placeholder="History Title" onChange={() => { }} />
+        <Input type="text" placeholder="History Title" onChange={handleChangeTextInput} />
         <S.FileInputWrapper>
           <S.FilenameInput value={fileName} disabled="disabled" placeholder='Choose File' />
           <label for="FileInputID">Upload</label>
           <S.HiddenInput type="file" onChange={handleChangeFileInput} id="FileInputID" />
         </S.FileInputWrapper>
-        <S.Button>Add New History</S.Button>
+        <S.Button onClick={handleClick}>Add New History</S.Button>
       </S.Wrapper>
     </ModalFrame>
 

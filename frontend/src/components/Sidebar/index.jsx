@@ -5,15 +5,24 @@ import useModal from '../../hooks/useModal.js';
 import HistoryFormModal from '../Modal/HistoryFormModal/index.jsx';
 import UserInfo from '../UserInfo/index.jsx';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { api } from '../../api/axiosService.js';
 
 const Sidebar = () => {
   const [isOpen, handleClickModalOpen, handleClickModalClose] = useModal();
   const [isSelectedId, setIsSelectedId] = useState(null);
+  const [list, setList] = useState([]);
 
   const handleClickItem = (id) => {
     setIsSelectedId(id);
   };
+
+  useEffect(() => {
+    api.get('http://127.0.0.1:8000/history/histories/').then((data) => {
+      setList(data.data.histories);
+    });
+  }, []);
+
   const navigate = useNavigate();
   return (
     <S.Layout>
@@ -26,12 +35,26 @@ const Sidebar = () => {
         <LogoIcon />
         CodeMate
       </S.Logo>
-      <HistoryList isSelectedId={isSelectedId} onClick={handleClickItem} />
+      <HistoryList
+        list={list}
+        isSelectedId={isSelectedId}
+        onClick={handleClickItem}
+        setIsSelectedId={setIsSelectedId}
+        setList={setList}
+      />
       <S.Bottom>
         <S.Button onClick={handleClickModalOpen}>Add History</S.Button>
         <UserInfo />
       </S.Bottom>
-      {isOpen && <HistoryFormModal handleClickModalClose={handleClickModalClose} width="400px" height="auto" />}
+      {isOpen && (
+        <HistoryFormModal
+          handleClickModalClose={handleClickModalClose}
+          setIsSelectedId={setIsSelectedId}
+          setList={setList}
+          width="400px"
+          height="auto"
+        />
+      )}
     </S.Layout>
   );
 };
