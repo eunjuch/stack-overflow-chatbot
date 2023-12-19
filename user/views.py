@@ -100,7 +100,7 @@ class LoginView(APIView):
                 'is_success': True,
                 'result': {
                     'tokens': tokens,
-                    'user_id': customUser.user_id
+                    'user_id': customUser.name
                 }
             }
             return Response(response, status=status.HTTP_200_OK)
