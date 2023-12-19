@@ -179,3 +179,4 @@ class LogoutTest(TestCase):
 
         self.assertEqual(response.status_code, 205)
 
+#test
