@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from openai import OpenAI
 import os
+#test
 
 OpenAI.api_key = os.environ.get('OPENAI_API_KEY')
 
@@ -31,9 +32,11 @@ class HistoryView(APIView):
             instance.is_file_exist = 'file' in request.FILES
             instance.save()
 
+            last_data = History.objects.order_by('-created_at').first()
+            print(last_data.id)
             response = {
                 'is_success': True,
-                'result': {'message': 'History post success'}
+                'result': {'history_id': last_data.id}
             }
             return JsonResponse(response, status=status.HTTP_200_OK)
         else:
