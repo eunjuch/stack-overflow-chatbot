@@ -7,6 +7,8 @@ from .models import CustomUser
 
 # Create your tests here.
 client = APIClient()
+user = CustomUser.objects.create_user(user_id='ehdwlsdlwkd22', name='조동진', password='password123')
+client.force_authenticate(user=user)
 
 # 회원가입 테스트
 class SignupTest(TestCase):
@@ -167,12 +169,9 @@ class LogoutTest(TestCase):
         response = client.post('/user/login/', json.dumps(data), content_type='application/json')
 
         # response에서 refresh_token 파싱
-        access = response.json()['result']['tokens']['refresh']
         refresh = response.json()['result']['tokens']['refresh']
 
         # Authorization 설정
-        user = get_object_or_404(CustomUser, pk=1)
-        client.force_authenticate(user=user, token=access)
         data = {
             'refresh': refresh
         }
