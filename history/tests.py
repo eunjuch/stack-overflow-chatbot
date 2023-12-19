@@ -1,18 +1,3 @@
-<<<<<<< HEAD
-# import mock
-# import json
-# from django.utils import timezone
-# from django.core.files import File
-# from django.shortcuts import get_object_or_404
-# from django.test import TestCase, Client
-# from history.models import History, Prompt
-# from user.models import CustomUser
-# from rest_framework.test import APIClient
-
-# client = APIClient()
-# user = CustomUser.objects.create_user(user_id='ehdwlsdlwkd22', name='조동진', password='password123')
-# client.force_authenticate(user=user)
-=======
 import json
 
 from django.test import TestCase, Client
@@ -42,8 +27,20 @@ class PromptTest(TestCase):
         # Given
         username = 'testuser'
         password = 'testpassword'
->>>>>>> 8eafa002f2d549257be6190b8c1d811b42c6de9b
 
+# import mock
+# import json
+# from django.utils import timezone
+# from django.core.files import File
+# from django.shortcuts import get_object_or_404
+# from django.test import TestCase, Client
+# from history.models import History, Prompt
+# from user.models import CustomUser
+# from rest_framework.test import APIClient
+
+# client = APIClient()
+# user = CustomUser.objects.create_user(user_id='ehdwlsdlwkd22', name='조동진', password='password123')
+# client.force_authenticate(user=user)
 # class HistoryViewTest(TestCase):
 #     def test_history_view_post(self):
 #         print()
